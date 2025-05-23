@@ -7,9 +7,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import axios from 'axios';
+import Button from '@mui/material/Button';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [users,setUsers]=useState([]);
+  const navigate=useNavigate()
+
   // let users=[
   //   {
   //   userid:"a1",
@@ -36,7 +40,19 @@ const Home = () => {
           setUsers(res.data);
       })
   },[])
-  
+  //funtion to call back end API for deletion
+   let deleteUser=(id)=>{
+      axios.delete('http://localhost:4000/userremoval/'+id).then((res)=>{
+          window.location.reload();//to reload the current page
+      }).catch((error)=>{
+          console.log(error)
+      })
+
+    }
+  //funtion to call back end API for update
+     let updateUser=(user)=>{
+      navigate('/add',{state:{user}})
+   }
   return (
     
     <TableContainer component={Paper}>
@@ -46,7 +62,8 @@ const Home = () => {
             <TableCell>userid</TableCell>
             <TableCell align="right">username</TableCell>
             <TableCell align="right">email</TableCell>
-           
+          
+            
           </TableRow>
         </TableHead>
         <TableBody>
@@ -60,7 +77,13 @@ const Home = () => {
               </TableCell>
               <TableCell align="right">{row.username}</TableCell>
               <TableCell align="right">{row.email}</TableCell>
-             
+              <TableCell align="right"><Button variant="contained" onClick={()=>{
+              deleteUser(row._id)
+             }} color='succes'>Delete</Button></TableCell>
+             <TableCell align="right"><Button variant="contained" onClick={()=>{
+                updateUser(row)
+              }} color="success">Edit</Button></TableCell>
+            
             </TableRow>
           ))}
         </TableBody>
